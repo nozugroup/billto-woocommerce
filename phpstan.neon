@@ -1,0 +1,17 @@
+includes:
+    - vendor/szepeviktor/phpstan-wordpress/extension.neon
+
+parameters:
+    level: 6
+    paths:
+        - includes
+        - billto-woocommerce.php
+        - uninstall.php
+    scanDirectories:
+        - lib/shop-integration-core/src
+    scanFiles:
+        - vendor/php-stubs/woocommerce-stubs/woocommerce-stubs.php
+        - vendor/php-stubs/woocommerce-stubs/woocommerce-packages-stubs.php
+    treatPhpDocTypesAsCertain: false
+    ignoreErrors:
+        - '#Constant (BILLTO_WC_[A-Z_]+|WC_VERSION) not found#'

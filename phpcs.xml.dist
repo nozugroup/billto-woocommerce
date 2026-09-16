@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<ruleset name="BillTo for WooCommerce">
+    <description>WordPress coding standards, security-focused subset (the code base uses PSR-12 style).</description>
+
+    <file>billto-woocommerce.php</file>
+    <file>uninstall.php</file>
+    <file>includes</file>
+    <!-- lib/ is the vendored shared core, checked in its own repository. -->
+
+    <arg name="extensions" value="php"/>
+    <arg name="colors"/>
+    <arg value="sp"/>
+
+    <config name="minimum_supported_wp_version" value="6.4"/>
+    <config name="testVersion" value="8.0-"/>
+
+    <!-- Security and correctness rules from WPCS; formatting is intentionally PSR-12, not WP style. -->
+    <rule ref="WordPress.Security">
+        <!-- Exceptions are caught and rendered through esc_html(); they are not output. -->
+        <exclude name="WordPress.Security.EscapeOutput.ExceptionNotEscaped"/>
+    </rule>
+    <rule ref="WordPress.DB"/>
+    <rule ref="WordPress.WP.I18n">
+        <properties>
+            <property name="text_domain" type="array">
+                <element value="billto-woocommerce"/>
+            </property>
+        </properties>
+    </rule>
+    <rule ref="WordPress.WP.AlternativeFunctions"/>
+    <rule ref="WordPress.WP.DeprecatedFunctions"/>
+    <rule ref="WordPress.WP.Capabilities">
+        <properties>
+            <property name="custom_capabilities" type="array">
+                <element value="manage_woocommerce"/>
+            </property>
+        </properties>
+    </rule>
+    <rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+        <properties>
+            <property name="prefixes" type="array">
+                <element value="billto_wc"/>
+                <element value="BILLTO_WC"/>
+                <element value="BillTo\WooCommerce"/>
+            </property>
+        </properties>
+    </rule>
+</ruleset>

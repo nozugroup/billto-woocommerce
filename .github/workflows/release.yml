@@ -1,0 +1,41 @@
+name: Release
+
+# Publishes the installable ZIP as a GitHub release asset. BillTo relays the latest release
+# through /api/v1/plugins/woocommerce/latest, which installed plugins query. The ZIP is built
+# from the tag.
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build and publish ZIP
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check the tag matches the plugin version
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+          HEADER=$(grep -oP '^\s*\*\s*Version:\s*\K[0-9][^\s]*' billto-woocommerce.php)
+          CONST=$(grep -oP "define\('BILLTO_WC_VERSION',\s*'\K[^']+" billto-woocommerce.php)
+          STABLE=$(grep -oP '^Stable tag:\s*\K[^\s]+' readme.txt)
+          echo "tag=$TAG header=$HEADER const=$CONST stable=$STABLE"
+          test "$TAG" = "$HEADER" && test "$TAG" = "$CONST" && test "$TAG" = "$STABLE"
+
+      - name: Build
+        run: |
+          mkdir -p build/billto-woocommerce
+          rsync -a --exclude-from=.distignore ./ build/billto-woocommerce/
+          cd build && zip -rq billto-woocommerce.zip billto-woocommerce
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build/billto-woocommerce.zip
+          generate_release_notes: true
